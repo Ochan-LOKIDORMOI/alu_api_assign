@@ -42,8 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const response = await fetch(url, options);
-            const result = await response.text();
-            console.log(result);
+            const results = await response.text();
+            const result = document.getElementById("result");
+            const ressults = JSON.parse(results);
+            result.innerHTML = ressults.new_amount;
         } catch (error) {
             console.error(error);
         }

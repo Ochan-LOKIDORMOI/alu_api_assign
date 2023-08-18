@@ -1,62 +1,51 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const convertBtn = document.getElementById("convertBtn");
-    const resultElement = document.getElementById("result");
+document.addEventListener('DOMContentLoaded', () => {
+    const convertBtn = document.getElementById('convertBtn');
+    const resultElement = document.getElementById('result');
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
+    const amountInput = document.getElementById('amount');
 
-    const currencyNames = {};
+    // "From" and "To" dropdowns with countries and their currencies
+    const countriesAndCurrencies = [
+        { code: 'USD', name: 'United States Dollar' },
+        { code: 'EUR', name: 'Euro' },
+        { code: 'GBP', name: 'British Pound Sterling' },
+        // more countries and currencies to be added....
+    ];
 
-    // Fetch currency data from REST Countries API
-    fetch("https://restcountries.com/v3.1/all")
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(country => {
-                const currencies = country.currencies || {};
-                Object.keys(currencies).forEach(currencyCode => {
-                    const currencyName = currencies[currencyCode].name;
-                    currencyNames[currencyCode] = currencyName;
-                });
-            });
+    countriesAndCurrencies.forEach(country => {
+        const optionFrom = document.createElement('option');
+        optionFrom.value = country.code;
+        optionFrom.textContent = `${country.name} (${country.code})`;
 
-            //  'from' and 'to' dropdowns with currency options
-            populateDropdown("from", currencyNames);
-            populateDropdown("to", currencyNames);
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-        });
+        const optionTo = document.createElement('option');
+        optionTo.value = country.code;
+        optionTo.textContent = `${country.name} (${country.code})`;
 
-    //function to populate dropdown options
-    function populateDropdown(dropdownId, optionsMap) {
-        const dropdown = document.getElementById(dropdownId);
-        for (const code in optionsMap) {
-            const option = document.createElement("option");
-            option.value = code;
-            option.textContent = `${code} - ${optionsMap[code]}`;
-            dropdown.appendChild(option);
-        }
-    }
-
-    convertBtn.addEventListener("click", async () => {
-        const amount = parseFloat(document.getElementById("amount").value);
-        const fromCurrency = document.getElementById("from").value;
-        const toCurrency = document.getElementById("to").value;
-
-        // Fetch conversion data from your API
-        const conversionEndpoint = "https://rapidapi.com/apininjas/api/currency-converter-by-api-ninjas"; // Replace with the actual endpoint
-        try {
-            const response = await fetch(conversionEndpoint);
-            const data = await response.json();
-
-            // Response contains the required properties
-            if (data.new_amount !== undefined && data.new_currency !== undefined) {
-                const convertedAmount = parseFloat(data.new_amount);
-                const resultText = `${amount} ${fromCurrency} is approximately ${convertedAmount.toFixed(5)} ${data.new_currency}`;
-                resultElement.textContent = resultText;
-            } else {
-                resultElement.textContent = "Conversion data is missing or incorrect. Please try again.";
-            }
-        } catch (error) {
-            console.error("Error fetching conversion data:", error);
-            resultElement.textContent = "An error occurred. Please try again later.";
-        }
+        fromSelect.appendChild(optionFrom);
+        toSelect.appendChild(optionTo);
     });
+
+    convertBtn.addEventListener('click', async () => {
+        const fromCurrency = fromSelect.value;
+        const toCurrency = toSelect.value;
+        const conversionAmount = amountInput.value;
+
+        const url = 'https://currency-converter-by-api-ninjas.p.rapidapi.com/v1/convertcurrency?have=USD&want=EUR&amount=5000';
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': 'dd13f9ffe9msh39c733169cb6fddp157467jsna2babf0a3187',
+                'X-RapidAPI-Host': 'currency-converter-by-api-ninjas.p.rapidapi.com'
+            }
+        };
+        
+        try {
+            const response = await fetch(url, options);
+            const result = await response.text();
+            console.log(result);
+        } catch (error) {
+            console.error(error);
+        }
+  });
 });

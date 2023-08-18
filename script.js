@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const toCurrency = toSelect.value;
         const conversionAmount = amountInput.value;
 
-        const url = 'https://currency-converter-by-api-ninjas.p.rapidapi.com/v1/convertcurrency?have=USD&want=EUR&amount=5000';
+        const url = `https://currency-converter-by-api-ninjas.p.rapidapi.com/v1/convertcurrency?have=${fromCurrency}&want=${toCurrency}&amount=${conversionAmount}`
         const options = {
             method: 'GET',
             headers: {
